@@ -10,20 +10,37 @@ import java.io.ByteArrayInputStream;
 
 public class JavaParserVisitor implements CommitVisitor {
 
+    private int totalDeprecated = 0;
+    private int totalNonDeprecated = 0;
+    private PersistenceMechanism writer;
+
     @Override
     public void process(SCMRepository repo, Commit commit, PersistenceMechanism writer) {
+        this.writer = writer;
+        MethodsVisitor visitor = new MethodsVisitor(writer);
 
         for (Modification m : commit.getModifications()) {
 
             if (m.wasDeleted()) continue;
-
-            MethodsVisitor visitor = new MethodsVisitor(writer);
             new JDTRunner().visit(visitor, new ByteArrayInputStream(m.getSourceCode().getBytes()));
-
-          //  writer.write("\nFound " + visitor.getQty() + " methods in " + repo.getOrigin());
-
         }
+        totalDeprecated += visitor.getDeprecated();
+        totalNonDeprecated += visitor.getNonDeprecated();
 
+      //  write("deprecated methods: " + totalDeprecated + "/" + totalNonDeprecated);
+
+    }
+
+    public void write(String toWrite) {
+        writer.write(toWrite);
+    }
+
+    public int getTotalDeprecated() {
+        return totalDeprecated;
+    }
+
+    public int getTotalNonDeprecated() {
+        return totalNonDeprecated;
     }
 
     @Override

@@ -7,7 +7,8 @@ import org.repodriller.persistence.PersistenceMechanism;
 public class MethodsVisitor extends ASTVisitor {
 
     private final PersistenceMechanism writer;
-    private int qty = 0;
+    private int deprecated = 0;
+    private int nonDeprecated = 0;
 
     public MethodsVisitor(PersistenceMechanism writer) {
         this.writer = writer;
@@ -25,14 +26,20 @@ public class MethodsVisitor extends ASTVisitor {
                System.out.println("Found deprecated method");
 
                writer.write(node.toString());
-               qty++;
+               deprecated++;
+           } else {
+               nonDeprecated++;
            }
         }
 
         return super.visit(node);
     }
 
-    public int getQty() {
-        return qty;
+    public int getDeprecated() {
+        return deprecated;
+    }
+
+    public int getNonDeprecated() {
+        return nonDeprecated;
     }
 }

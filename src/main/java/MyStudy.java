@@ -17,12 +17,16 @@ public class MyStudy implements Study {
     @Override
     public void execute() {
         System.out.println("MyStudy.execute");
+        JavaParserVisitor parserVisitor = new JavaParserVisitor();
         new RepositoryMining()
                 .in(GitRemoteRepository.singleProject(REPO_URL))
                 .through(Commits.all())
-                .process(new JavaParserVisitor(), new CSVFile("test.csv"))
+                .withThreads(4)
+                .process(parserVisitor, new CSVFile("test.csv"))
                 .mine();
 
+        System.out.println("Total percentage: " + parserVisitor.getTotalDeprecated() + " / " + parserVisitor.getTotalNonDeprecated());
+        parserVisitor.write("Total percentage: " + parserVisitor.getTotalDeprecated()/parserVisitor.getTotalNonDeprecated());
         System.out.println("done!");
     }
 }
