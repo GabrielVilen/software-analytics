@@ -20,14 +20,13 @@ public class JavaParserVisitor implements CommitVisitor {
         MethodsVisitor visitor = new MethodsVisitor(writer);
 
         for (Modification m : commit.getModifications()) {
-
             if (m.wasDeleted()) continue;
             new JDTRunner().visit(visitor, new ByteArrayInputStream(m.getSourceCode().getBytes()));
         }
         totalDeprecated += visitor.getDeprecated();
         totalNonDeprecated += visitor.getNonDeprecated();
 
-      //  write("deprecated methods: " + totalDeprecated + "/" + totalNonDeprecated);
+     //   write("deprecated methods: " + totalDeprecated + "/" + totalNonDeprecated);
 
     }
 

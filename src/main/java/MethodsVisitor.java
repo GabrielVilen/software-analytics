@@ -1,7 +1,4 @@
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.*;
 import org.repodriller.persistence.PersistenceMechanism;
 
 public class MethodsVisitor extends ASTVisitor {
@@ -19,14 +16,19 @@ public class MethodsVisitor extends ASTVisitor {
      */
     @Override
     public boolean visit(MethodDeclaration node) {
-
+//  System.out.println(node.modifiers().get(0).getClass());
         Javadoc doc = node.getJavadoc();
         if(doc != null) {
            if(doc.toString().contains(TagElement.TAG_DEPRECATED)) {
-               System.out.println("Found deprecated method");
+               for (Object m : node.modifiers()) {
+                   if(m instanceof Modifier && ((Modifier) m).isPublic()) {
+                       System.out.println("Found deprecated method");
 
-               writer.write(node.toString());
-               deprecated++;
+                       writer.write(node.toString());
+                       deprecated++;
+                   }
+               }
+
            } else {
                nonDeprecated++;
            }

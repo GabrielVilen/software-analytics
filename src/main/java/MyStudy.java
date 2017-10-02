@@ -7,7 +7,7 @@ import org.repodriller.scm.GitRemoteRepository;
 
 public class MyStudy implements Study {
 
-    final static String REPO_URL = "https://github.com/spring-projects/spring-framework";
+    final static String REPO_URL = "https://github.com/hibernate/hibernate-orm"; // "https://github.com/spring-projects/spring-framework";
 
     public static void main(String[] args) {
      //   BasicConfigurator.configure(); // not needed with log4j.properties
