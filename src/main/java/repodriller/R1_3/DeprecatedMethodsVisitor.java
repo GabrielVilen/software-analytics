@@ -1,13 +1,15 @@
+package repodriller.R1_3;
+
 import org.eclipse.jdt.core.dom.*;
 import org.repodriller.persistence.PersistenceMechanism;
 
-public class MethodsVisitor extends ASTVisitor {
+public class DeprecatedMethodsVisitor extends ASTVisitor {
 
     private final PersistenceMechanism writer;
     private int deprecated = 0;
     private int nonDeprecated = 0;
 
-    public MethodsVisitor(PersistenceMechanism writer) {
+    public DeprecatedMethodsVisitor(PersistenceMechanism writer) {
         this.writer = writer;
     }
 

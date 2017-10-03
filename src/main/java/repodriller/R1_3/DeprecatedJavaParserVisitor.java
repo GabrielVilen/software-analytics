@@ -1,3 +1,5 @@
+package repodriller.R1_3;
+
 import br.com.metricminer2.parser.jdt.JDTRunner;
 import org.repodriller.domain.Commit;
 import org.repodriller.domain.Modification;
@@ -8,7 +10,7 @@ import org.repodriller.scm.SCMRepository;
 import java.io.ByteArrayInputStream;
 
 
-public class JavaParserVisitor implements CommitVisitor {
+public class DeprecatedJavaParserVisitor implements CommitVisitor {
 
     private int totalDeprecated = 0;
     private int totalNonDeprecated = 0;
@@ -17,7 +19,7 @@ public class JavaParserVisitor implements CommitVisitor {
     @Override
     public void process(SCMRepository repo, Commit commit, PersistenceMechanism writer) {
         this.writer = writer;
-        MethodsVisitor visitor = new MethodsVisitor(writer);
+        DeprecatedMethodsVisitor visitor = new DeprecatedMethodsVisitor(writer);
 
         for (Modification m : commit.getModifications()) {
             if (m.wasDeleted()) continue;

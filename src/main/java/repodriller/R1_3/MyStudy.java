@@ -1,13 +1,17 @@
+package repodriller.R1_3;
+
 import org.repodriller.RepoDriller;
 import org.repodriller.RepositoryMining;
 import org.repodriller.Study;
 import org.repodriller.filter.range.Commits;
 import org.repodriller.persistence.csv.CSVFile;
-import org.repodriller.scm.GitRemoteRepository;
+import org.repodriller.scm.GitRepository;
 
 public class MyStudy implements Study {
 
-    final static String REPO_URL = "https://github.com/hibernate/hibernate-orm"; // "https://github.com/spring-projects/spring-framework";
+
+    private static final String REPO_NAME = "spring-framework";
+    private static final String REPO_URL = "../spring-framework"; //
 
     public static void main(String[] args) {
      //   BasicConfigurator.configure(); // not needed with log4j.properties
@@ -17,12 +21,12 @@ public class MyStudy implements Study {
     @Override
     public void execute() {
         System.out.println("MyStudy.execute");
-        JavaParserVisitor parserVisitor = new JavaParserVisitor();
+        DeprecatedJavaParserVisitor parserVisitor = new DeprecatedJavaParserVisitor();
         new RepositoryMining()
-                .in(GitRemoteRepository.singleProject(REPO_URL))
+                .in(GitRepository.singleProject(REPO_URL))
                 .through(Commits.all())
                 .withThreads(4)
-                .process(parserVisitor, new CSVFile("test.csv"))
+                .process(parserVisitor, new CSVFile(REPO_NAME+".csv"))
                 .mine();
 
         System.out.println("Total percentage: " + parserVisitor.getTotalDeprecated() + " / " + parserVisitor.getTotalNonDeprecated());
