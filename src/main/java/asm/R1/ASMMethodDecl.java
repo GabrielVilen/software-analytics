@@ -12,6 +12,7 @@ public class ASMMethodDecl implements Serializable{
     private String methodName;
     private Boolean isDeprecated;
     private Boolean hasDeprecatedAnnotation;
+    private String javaDoc;
 
     public ASMMethodDecl(String className, String methodName, Boolean isDeprecated, Boolean hasDeprecatedAnnotation) {
         this.className = className;
@@ -29,7 +30,7 @@ public class ASMMethodDecl implements Serializable{
     }
 
     public String toString() {
-        return className + " " + methodName + " " + isDeprecated;
+        return className + " " + methodName + " " + isDeprecated + "\n" + javaDoc;
     }
 
     public Boolean getIsDeprecated() {
@@ -48,4 +49,11 @@ public class ASMMethodDecl implements Serializable{
         this.hasDeprecatedAnnotation = hasDeprecatedAnnotation;
     }
 
+    public void setJavaDoc(String javaDoc) {
+        this.javaDoc = javaDoc;
+    }
+
+    public String getJavaDoc() {
+        return javaDoc;
+    }
 }

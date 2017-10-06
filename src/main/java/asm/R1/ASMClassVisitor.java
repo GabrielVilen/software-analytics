@@ -1,9 +1,6 @@
 package asm.R1;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +53,12 @@ public class ASMClassVisitor extends ClassVisitor {
     }
 
     @Override
+    public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+            // TODO: check if public
+            return super.visitField(access, name, desc, signature, value);
+    }
+
+    @Override
     public MethodVisitor visitMethod(int access, final String name, String desc, String signature,
                                      String[] exceptions) {
         boolean isPrivate = true;
@@ -75,7 +78,7 @@ public class ASMClassVisitor extends ClassVisitor {
 
                 }
             }
-            if(this.isDeprecated == true) {
+            if(this.isDeprecated) {
                 isDeprecated = true;
             }
             ASMMethodDecl methodDecl = new ASMMethodDecl(this.className, name, isDeprecated, false);
@@ -90,6 +93,7 @@ public class ASMClassVisitor extends ClassVisitor {
                     for (ASMMethodDecl m : methods) {
                         if (m.getMethodName().equals(name)) {
                             m.setHasDeprecatedAnnotation(true);
+                            m.setJavaDoc(desc);
                         }
                     }
                 }
