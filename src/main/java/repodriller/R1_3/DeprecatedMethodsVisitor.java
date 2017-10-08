@@ -1,5 +1,8 @@
 package repodriller.R1_3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.*;
 import org.repodriller.persistence.PersistenceMechanism;
 
@@ -8,6 +11,8 @@ public class DeprecatedMethodsVisitor extends ASTVisitor {
     private final PersistenceMechanism writer;
     private int deprecated = 0;
     private int nonDeprecated = 0;
+    private static List<String> deprecatedMethods = new ArrayList<String>();
+    private static List<String> nonDeprecatedMethods = new ArrayList<String>();
 
     public DeprecatedMethodsVisitor(PersistenceMechanism writer) {
         this.writer = writer;
@@ -26,13 +31,21 @@ public class DeprecatedMethodsVisitor extends ASTVisitor {
                    if(m instanceof Modifier && ((Modifier) m).isPublic()) {
                        System.out.println("Found deprecated method");
 
-                       writer.write(node.toString());
-                       deprecated++;
+                       String deprecatedmethod = node.toString().split("@Deprecated ")[1];
+                       if(!deprecatedMethods.contains(deprecatedmethod)) {
+                    	   deprecatedMethods.add(deprecatedmethod);
+                    	   writer.write(deprecatedmethod);                   
+                    	   deprecated++;
+                       }
                    }
                }
 
            } else {
-               nonDeprecated++;
+        	   String nondeprecatedmethod = node.toString().split("[*]/")[1];
+        	   if(!nonDeprecatedMethods.contains(nondeprecatedmethod)) {
+        		   nonDeprecatedMethods.add(nondeprecatedmethod);
+        		   nonDeprecated++;
+        	   }
            }
         }
 
