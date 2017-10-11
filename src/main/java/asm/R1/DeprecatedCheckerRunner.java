@@ -10,7 +10,7 @@ import java.nio.file.*;
 /**
  * Created by gabriel on 2017-10-05.
  */
-public class FileReaderRunner {
+public class DeprecatedCheckerRunner {
 
     private static final String RQS_RESULT = "RQs_result/1.1/";
 

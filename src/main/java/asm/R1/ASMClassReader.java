@@ -52,21 +52,25 @@ public class ASMClassReader{
 
     public void showFiles(File[] files) {
         for (File file : files) {
-            if (file.isDirectory()) {
-                System.out.println("Directory: " + file.getName());
-                showFiles(file.listFiles()); // Calls same method again.
-            } else {
-                try {
-                    if(file.getName().contains(".class")) {
+             try {
+                if (file.isDirectory()) {
+                    System.out.println("Directory: " + file.getName());
+                    showFiles(file.listFiles()); // Calls same method again.
+                } else {
+                    if(file.getName().contains(".html")) continue;
+
+                    if (file.getName().contains(".class")) {
                         System.out.println("File: " + file.getName());
                         ASMAPIClass asmapiClass = readClass(file.getPath());
                         // mapMethods.put(file, asmapiClass.getMethodDeclarations());
                         writeMethods(asmapiClass.getMethodDeclarations());
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
+            } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.print(file);
+                }
+
         }
     }
 

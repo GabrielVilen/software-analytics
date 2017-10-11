@@ -81,7 +81,7 @@ public class ASMClassVisitor extends ClassVisitor {
             if(this.isDeprecated) {
                 isDeprecated = true;
             }
-            ASMMethodDecl methodDecl = new ASMMethodDecl(this.className, name, isDeprecated, false);
+            ASMMethodDecl methodDecl = new ASMMethodDecl(this.className, name, isDeprecated, false, access);
             this.methods.add(methodDecl);
 
         }

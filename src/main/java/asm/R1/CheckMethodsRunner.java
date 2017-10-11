@@ -13,75 +13,77 @@ import java.util.*;
  */
 public class CheckMethodsRunner {
 
-    private Map<String, String> depMap = new HashMap<>();
-
     public static void main(String[] args) {
-        CheckMethodsRunner runner = new CheckMethodsRunner();
+        new CheckMethodsRunner(Paths.get(args[0]));
+    }
 
-        Path dir = Paths.get(args[0]);
+    private TreeMap<String, Integer> lineCountMap;
+    private List<String> initLines;
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            int i = 0;
-            for (Path file : stream) {
-              //  File[] fileMap = file.toFile().listFiles();
-              //  assert fileMap != null;
-               // for (int i = 0; i < fileMap.length; i++) {
-                        runner.add(file);
-                       // runner.compare(file, i);
-                       // i++;
-               // }
+    public CheckMethodsRunner(Path path) {
+        TreeMap<String, File> fileMap = new TreeMap<>(Collator.getInstance());
+        lineCountMap = new TreeMap<>(Collator.getInstance());
+        initLines = new ArrayList<>();
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+            for (Path p : stream) {
+                fileMap.put(p.toString(), p.toFile());
+                lineCountMap.put(p.toFile().getName(), 0);
             }
         } catch (IOException | DirectoryIteratorException x) {
             System.err.println(x);
         }
-        runner.compare();
-    }
 
-    private void compare() {
-        for (Map.Entry<String,File> entry : fileMap.entrySet()) {
-            compare(entry.getValue());
-        }
-        printMap();
-    }
+        int currCount = 0;
+        while (!fileMap.isEmpty()) {
+            boolean hasRemovedFirst = false;
+            for (Iterator<Map.Entry<String, File>> iterator = fileMap.entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<String, File> fileEntry = iterator.next();
 
-    TreeMap<String, File> fileMap = new TreeMap<>(Collator.getInstance());
-    //private List<File> fileMap = new ArrayList<>();
+                checkForDeprecation(fileEntry.getValue());
 
-    private void add(Path path) {
-        fileMap.put(path.toString(), path.toFile());
-    }
-
-    private void printMap() {
-        System.out.println("\nResults:");
-        for (Map.Entry<String, String> line : depMap.entrySet()) {
-            System.out.println(line.getKey() + " : " + line.getValue());
-
+                if (!hasRemovedFirst) {
+                    System.out.println("Removed " + fileEntry.getKey());
+                    iterator.remove();
+                    hasRemovedFirst = true;
+                }
+            }
+            resetMap(lineCountMap, currCount);
+            initLines.clear();
+            currCount++;
         }
     }
 
-    private List<String> nonDepLines;
+    private void resetMap(Map<String, Integer> lineCountMap, int currCount) {
+        System.out.println("\nResults: ");
+        int i = 0;
+        for (Map.Entry<String, Integer> entry : lineCountMap.entrySet()) {
+       //     if(i > currCount)
+                System.out.println(entry.getValue()); // line.getKey() + " : " + line.getValue()
 
-    private void compare(File cmpFile) {
-        if(!cmpFile.isFile()) return;
-       // System.out.println("comparing " + cmpFile);
+            entry.setValue(0);  // reset count to -1
+            i++;
+        }
+        System.out.println("-----------------------------------");
+    }
 
-        List<String> cmpLines = getLines(cmpFile);
+    private void checkForDeprecation(File file) {
+        List<String> cmpLines = getLines(file);
 
-        if(nonDepLines == null) {
-            nonDepLines = new ArrayList<>();
-            nonDepLines = cmpLines;
-            System.out.println(cmpFile.getPath() + ": Added init lines " + nonDepLines);
+        if(initLines.isEmpty()) {
+            initLines = cmpLines;
+            System.out.println(file.getPath() + ": Added init lines " + initLines);
             return;
         }
 
-        for (Iterator<String> iterator = nonDepLines.iterator(); iterator.hasNext(); ) {
-            String line = iterator.next();
-          //  System.out.println("cmp line " + line);
-            if(cmpLines.contains(line)) {
+        for (Iterator<String> iterator = initLines.iterator(); iterator.hasNext(); ) {
+            String currLine = iterator.next();
+
+            // if the dep method is not in this api it has been removed before release
+            if(!cmpLines.contains(currLine)) {
+                int count = lineCountMap.get(file.getName());
+                lineCountMap.put(file.getName(), count+1);
                 iterator.remove();
-                //nonDepLines.remove(line);
-                depMap.put(line, cmpFile.getName());
-              //  System.out.println("Found deprecated method '" + line + "' in " + cmpFile.getName());
             }
         }
     }
