@@ -10,13 +10,14 @@ import java.nio.file.*;
 /**
  * Created by gabriel on 2017-10-05.
  */
-public class DeprecatedCheckerRunner {
+public class DeprecatedChecker {
 
-    private static final String RQS_RESULT = "RQs_result/1.1/";
 
     public static void main(String[] args) {
 
         Path dir = Paths.get(args[0]);
+        String[] name = dir.toString().split("-");
+        String RQS_RESULT = "RQs_result/1.1/" + name[1] + "/";
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path file: stream) {
@@ -30,10 +31,10 @@ public class DeprecatedCheckerRunner {
 
                 // reader.writeMethods(asmapiClass.getMethodDeclarations());
 
-                String toWrite = file.getFileName() + ": dep methods = " + reader.getDepMethods() + " / " + reader.getNonDepMethods();
-                System.out.println(toWrite);
-                System.out.println();
-                writer.write(toWrite);
+         //       String toWrite = file.getFileName() + ": dep methods = " + reader.getDepMethods() + " / " + reader.getNonDepMethods();
+         //       System.out.println(toWrite);
+         //       System.out.println();
+         //       writer.write(toWrite);
             }
         } catch (IOException | DirectoryIteratorException x) {
             // IOException can never be thrown by the iteration.

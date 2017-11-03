@@ -9,12 +9,15 @@ import org.repodriller.scm.GitRepository;
 
 public class MyStudy implements Study {
 
-
-    private static final String REPO_NAME = "hibernate-core-3.3.0.GA/";
-    private static final String REPO_URL = "/home/gabriel/Documents/" + REPO_NAME; //
-    private static final String DEST = "RQs_result/1.1/" + REPO_NAME;
+    private static String REPO_URL = ""; // give as arg[0]
+    private static String DEST = "RQs_result/1.1/";
 
     public static void main(String[] args) {
+        if(args.length > 0) {
+            REPO_URL = args[0];
+            DEST += REPO_URL.split("/");
+          //  DEST += s[s.length];
+        }
      //   BasicConfigurator.configure(); // not needed with log4j.properties
         new RepoDriller().start(new MyStudy());
     }

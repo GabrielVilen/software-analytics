@@ -40,12 +40,12 @@ public class ASMClassReader{
 
     private void writeMethods(List<ASMMethodDecl> methodDeclarations) {
         for (ASMMethodDecl m : methodDeclarations) {
-            if (m.getIsDeprecated()) { // TODO: check only public
-                depMethods++;
+       //     if (m.getIsDeprecated()) { //
+      //          depMethods++;
                 writer.write(m.toString());
-            } else {
-                nonDepMethods++;
-            }
+      //      } else {
+      //          nonDepMethods++;
+      //      }
         }
     }
 

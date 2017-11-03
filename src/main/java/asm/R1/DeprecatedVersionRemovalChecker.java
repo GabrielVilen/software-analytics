@@ -11,16 +11,16 @@ import java.util.*;
 /**
  * Created by gabriel on 2017-10-05.
  */
-public class CheckMethodsRunner {
+public class DeprecatedVersionRemovalChecker {
 
     public static void main(String[] args) {
-        new CheckMethodsRunner(Paths.get(args[0]));
+        new DeprecatedVersionRemovalChecker(Paths.get(args[0]));
     }
 
     private TreeMap<String, Integer> lineCountMap;
     private List<String> initLines;
 
-    public CheckMethodsRunner(Path path) {
+    public DeprecatedVersionRemovalChecker(Path path) {
         TreeMap<String, File> fileMap = new TreeMap<>(Collator.getInstance());
         lineCountMap = new TreeMap<>(Collator.getInstance());
         initLines = new ArrayList<>();
@@ -48,15 +48,16 @@ public class CheckMethodsRunner {
                     hasRemovedFirst = true;
                 }
             }
-            resetMap(lineCountMap, currCount);
+            printAndReset(lineCountMap, currCount);
             initLines.clear();
             currCount++;
         }
     }
 
-    private void resetMap(Map<String, Integer> lineCountMap, int currCount) {
+    public static void printAndReset(Map<String, Integer> lineCountMap, int currCount) {
         System.out.println("\nResults: ");
         int i = 0;
+        //int prevValue = 0;
         for (Map.Entry<String, Integer> entry : lineCountMap.entrySet()) {
        //     if(i > currCount)
                 System.out.println(entry.getValue()); // line.getKey() + " : " + line.getValue()
@@ -69,25 +70,29 @@ public class CheckMethodsRunner {
 
     private void checkForDeprecation(File file) {
         List<String> cmpLines = getLines(file);
+        int count = 0;
 
-        if(initLines.isEmpty()) {
+       if(initLines.isEmpty()) {
             initLines = cmpLines;
             System.out.println(file.getPath() + ": Added init lines " + initLines);
             return;
         }
+
 
         for (Iterator<String> iterator = initLines.iterator(); iterator.hasNext(); ) {
             String currLine = iterator.next();
 
             // if the dep method is not in this api it has been removed before release
             if(!cmpLines.contains(currLine)) {
-                int count = lineCountMap.get(file.getName());
-                lineCountMap.put(file.getName(), count+1);
+               // int count = lineCountMap.get(file.getName());
+                count++;
+                lineCountMap.put(file.getName(), count);
                 iterator.remove();
             }
         }
+        initLines = cmpLines;
     }
-    private List<String> getLines(File file) {
+    public static List<String> getLines(File file) {
 
         List<String> lines = new ArrayList<>();
         try {
